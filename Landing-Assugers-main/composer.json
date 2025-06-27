@@ -1,0 +1,6 @@
+{
+    "name": "landing-assugers/landing",
+    "require": {
+        "phpmailer/phpmailer": "^6.8"
+    }
+}
