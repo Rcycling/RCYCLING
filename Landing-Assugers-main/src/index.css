@@ -9,6 +9,14 @@
 body {
   font-family: 'Poppins', sans-serif;
   line-height: 1.6;
+  /* Empêche le défilement horizontal sur mobile */
+  overflow-x: hidden;
+}
+
+/* Images responsives */
+img {
+  max-width: 100%;
+  height: auto;
 }
 
 /* Custom animations */

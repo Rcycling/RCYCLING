@@ -36,15 +36,32 @@ const QuoteForm = () => {
   };
 
   const handleSubmit = () => {
+    if (!formRef.current) return;
+
+    // Injecte tous les champs collectés comme inputs cachés avant l'envoi
+    Object.entries(formData).forEach(([section, data]) => {
+      Object.entries(data || {}).forEach(([key, value]) => {
+        const input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = `${section}_${key}`;
+        input.value = String(value);
+        formRef.current!.appendChild(input);
+      });
+    });
+
     setIsSubmitting(true);
-    if (formRef.current) {
-      const input = document.createElement('input');
-      input.type = 'hidden';
-      input.name = 'selectedProduct';
-      input.value = selectedProduct;
-      formRef.current.appendChild(input);
-      formRef.current.submit();
-    }
+if (formRef.current) {
+  // Réutilise l’input s’il existe déjà pour éviter les doublons
+  let input = formRef.current.querySelector('input[name="selectedProduct"]');
+  if (!input) {
+    input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'selectedProduct';
+    formRef.current.appendChild(input);
+  }
+  input.value = selectedProduct;
+  formRef.current.submit();
+}
   };
 
   const getCurrentStepComponent = () => {
@@ -94,7 +111,7 @@ const QuoteForm = () => {
           </div>
           
           {/* Form Content */}
-          <form ref={formRef} action="/sendmail.php" method="POST" className="p-8">
+          <form ref={formRef} action="/api/mail.php" method="POST" className="p-8">
             <input type="text" name="website" style={{ display: 'none' }} />
             <CurrentStepComponent />
             
