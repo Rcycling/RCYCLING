@@ -37,7 +37,14 @@ const QuoteForm = () => {
 
   const handleSubmit = () => {
     setIsSubmitting(true);
-    formRef.current?.submit();
+    if (formRef.current) {
+      const input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'selectedProduct';
+      input.value = selectedProduct;
+      formRef.current.appendChild(input);
+      formRef.current.submit();
+    }
   };
 
   const getCurrentStepComponent = () => {
