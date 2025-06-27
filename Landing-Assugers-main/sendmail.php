@@ -3,17 +3,8 @@ ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
-// PHPMailer manual include
-$base = __DIR__ . '/PHPMailer/src/';
-$files = ['Exception.php', 'PHPMailer.php', 'SMTP.php'];
-foreach ($files as $f) {
-    if (!file_exists($base . $f)) {
-        header('Content-Type: application/json');
-        echo json_encode(['status' => 'error', 'error' => 'PHPMailer non trouvé']);
-        exit;
-    }
-    require_once $base . $f;
-}
+// Autoload PHPMailer installed via Composer
+require_once __DIR__ . '/vendor/autoload.php';
 
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
@@ -23,12 +14,12 @@ $mail = new PHPMailer(true);
 try {
     // SMTP config
     $mail->isSMTP();
-    $mail->Host       = 'smtp.office365.com';
+    $mail->Host       = getenv('SMTP_HOST') ?: 'smtp.office365.com';
     $mail->SMTPAuth   = true;
-    $mail->Username   = 'postmaster@assugeris.fr';
-    $mail->Password   = 'TON_MOT_DE_PASSE';
-    $mail->SMTPSecure = 'tls';
-    $mail->Port       = 587;
+    $mail->Username   = getenv('SMTP_USERNAME') ?: 'postmaster@assugeris.fr';
+    $mail->Password   = getenv('SMTP_PASSWORD');
+    $mail->SMTPSecure = getenv('SMTP_SECURE') ?: 'tls';
+    $mail->Port       = getenv('SMTP_PORT') ?: 587;
 
     if (!$mail->smtpConnect()) {
         header('Content-Type: application/json');
@@ -50,8 +41,9 @@ try {
     }
 
     // Prepare email
-    $mail->setFrom('postmaster@assugeris.fr', 'Site Assugeris');
-    $mail->addAddress('postmaster@assugeris.fr');
+    $from = getenv('SMTP_FROM') ?: 'postmaster@assugeris.fr';
+    $mail->setFrom($from, 'Site Assugeris');
+    $mail->addAddress($from);
     $mail->addReplyTo($email, $name);
     $mail->Subject = '💬 [Contact] ' . $subject;
     $mail->isHTML(true);
