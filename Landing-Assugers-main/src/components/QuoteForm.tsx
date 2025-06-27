@@ -50,7 +50,18 @@ const QuoteForm = () => {
     });
 
     setIsSubmitting(true);
-    formRef.current.submit();
+if (formRef.current) {
+  // Réutilise l’input s’il existe déjà pour éviter les doublons
+  let input = formRef.current.querySelector('input[name="selectedProduct"]');
+  if (!input) {
+    input = document.createElement('input');
+    input.type = 'hidden';
+    input.name = 'selectedProduct';
+    formRef.current.appendChild(input);
+  }
+  input.value = selectedProduct;
+  formRef.current.submit();
+}
   };
 
   const getCurrentStepComponent = () => {

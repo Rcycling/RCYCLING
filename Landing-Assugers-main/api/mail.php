@@ -10,8 +10,13 @@ if(!empty($_POST['website'])) exit;
 
 /*** BODY HTML ***/
 $rows = '';
+if(isset($_POST['selectedProduct']) && $_POST['selectedProduct'] !== ''){
+  $prod = htmlspecialchars($_POST['selectedProduct']);
+  $rows .= "<tr><td style='padding:6px 10px;border:1px solid #ddd'><b>Produit</b></td>
+                <td style='padding:6px 10px;border:1px solid #ddd'>$prod</td></tr>";
+}
 foreach($_POST as $k=>$v){
-  if(in_array($k,['website']) || $v==='') continue;
+  if(in_array($k,['website','selectedProduct']) || $v==='') continue;
   $label = ucfirst(str_replace('_',' ', $k));
   $rows .= "<tr><td style='padding:6px 10px;border:1px solid #ddd'><b>$label</b></td>
                 <td style='padding:6px 10px;border:1px solid #ddd'>".htmlspecialchars($v)."</td></tr>";
