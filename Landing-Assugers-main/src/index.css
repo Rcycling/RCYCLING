@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 * {
-  scroll-behavior: smooth;
 }
 
 body {
@@ -96,4 +95,17 @@ textarea {
 
 .animate-pulse {
   animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@media (max-width: 768px) {
+  header {
+    position: fixed;
+    top: 2rem;
+    left: 0;
+    right: 0;
+    width: 100%;
+    z-index: 40;
+  }
+  #hero {
+    padding-top: 6rem;
+  }
 }

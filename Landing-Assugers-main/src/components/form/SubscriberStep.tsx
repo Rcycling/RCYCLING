@@ -76,6 +76,7 @@ const SubscriberStep = () => {
           <input
             type="text"
             name="postalCode"
+            pattern="^\d{5}$"
             value={formData.subscriber?.postalCode || ''}
             onChange={(e) => handleInputChange('postalCode', e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#16a34a] focus:border-transparent transition-all duration-300"
