@@ -64,6 +64,7 @@ const ContactStep = () => {
           <input
             type="tel"
             name="phone"
+            pattern="^0[1-9](?:[ .-]?\d{2}){4}$"
             value={formData.contact?.phone || ''}
             onChange={(e) => handleInputChange('phone', e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#16a34a] focus:border-transparent transition-all duration-300"

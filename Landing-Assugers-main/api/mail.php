@@ -1,9 +1,13 @@
-<?php
-error_reporting(0);
+<?php declare(strict_types=1);
+if (getenv('APP_DEBUG') === 'true') {
+    error_reporting(E_ALL);
+} else {
+    error_reporting(0);
+}
 
 /*** CONFIG ***/
-$dest      = 'assugeris83200@gmail.com';
-$fromEmail = 'contact@assugeris-assurances.fr';
+$dest      = getenv('MAIL_DEST');
+$fromEmail = getenv('MAIL_FROM');
 
 /*** HONEYPOT ***/
 if(!empty($_POST['website'])) exit;
@@ -29,8 +33,9 @@ $body = "
 </body></html>";
 
 /*** HEADERS ***/
+$safeEmail = str_replace(["\n","\r"], '', filter_var($_POST['email'] ?? '', FILTER_SANITIZE_EMAIL));
 $headers  = "From: Landing Assugeris <$fromEmail>\r\n";
-$headers .= "Reply-To: ".$_POST['email']."\r\n";
+$headers .= "Reply-To: $safeEmail\r\n";
 $headers .= "MIME-Version: 1.0\r\n";
 $headers .= "Content-Type: text/html; charset=UTF-8\r\n";
 

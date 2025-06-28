@@ -38,6 +38,7 @@ const NeedStep = () => {
             <input
               type="text"
               name="vehicleLicensePlate"
+              pattern="^[A-Z]{2}-?\d{3}-?[A-Z]{2}$"
               value={formData.need?.vehicleLicensePlate || ''}
               onChange={(e) => handleInputChange('vehicleLicensePlate', e.target.value)}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#16a34a] focus:border-transparent transition-all duration-300"
@@ -183,7 +184,7 @@ const NeedStep = () => {
             type="checkbox"
             name="gdprConsent"
             checked={formData.need?.gdprConsent || false}
-            onChange={(e) => handleInputChange('gdprConsent', e.target.checked.toString())}
+            onChange={(e) => handleInputChange('gdprConsent', e.target.checked)}
             className="mt-1 h-4 w-4 text-[#16a34a] focus:ring-[#16a34a] border-gray-300 rounded"
             required
           />

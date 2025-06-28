@@ -38,6 +38,9 @@ const QuoteForm = () => {
   const handleSubmit = () => {
     if (!formRef.current) return;
 
+    // Nettoie les anciens champs ajoutés pour éviter les doublons
+    formRef.current.querySelectorAll('input[data-auto]').forEach(el => el.remove());
+
     // Injecte tous les champs collectés comme inputs cachés avant l'envoi
     Object.entries(formData).forEach(([section, data]) => {
       Object.entries(data || {}).forEach(([key, value]) => {
@@ -45,6 +48,7 @@ const QuoteForm = () => {
         input.type = 'hidden';
         input.name = `${section}_${key}`;
         input.value = String(value);
+        input.dataset.auto = 'true';
         formRef.current!.appendChild(input);
       });
     });
@@ -57,6 +61,7 @@ if (formRef.current) {
     input = document.createElement('input');
     input.type = 'hidden';
     input.name = 'selectedProduct';
+    input.dataset.auto = 'true';
     formRef.current.appendChild(input);
   }
   input.value = selectedProduct;

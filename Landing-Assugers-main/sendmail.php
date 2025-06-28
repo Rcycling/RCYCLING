@@ -1,7 +1,11 @@
-<?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
+<?php declare(strict_types=1);
+if (getenv('APP_DEBUG') === 'true') {
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+    error_reporting(E_ALL);
+} else {
+    error_reporting(0);
+}
 
 // Autoload PHPMailer installed via Composer
 require_once __DIR__ . '/vendor/autoload.php';
@@ -9,9 +13,25 @@ require_once __DIR__ . '/vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
+
 $mail = new PHPMailer(true);
 
 try {
+    // Validate input first
+    if (!empty($_POST['website'])) {
+        exit;
+    }
+    $name    = isset($_POST['name']) ? htmlspecialchars($_POST['name']) : '';
+    $email   = isset($_POST['email']) ? filter_var($_POST['email'], FILTER_SANITIZE_EMAIL) : '';
+    $subject = isset($_POST['subject']) ? htmlspecialchars($_POST['subject']) : '';
+    $message = isset($_POST['message']) ? nl2br(htmlspecialchars($_POST['message'])) : '';
+
+    if (!filter_var($email, FILTER_VALIDATE_EMAIL) || $message === '') {
+        header('Content-Type: application/json');
+        echo json_encode(['status' => 'error', 'error' => 'Champs manquants']);
+        exit;
+    }
+
     // SMTP config
     $mail->isSMTP();
     $mail->Host       = getenv('SMTP_HOST') ?: 'smtp.office365.com';
@@ -27,18 +47,6 @@ try {
         exit;
     }
     $mail->smtpClose();
-
-    // Validate input
-    $name    = isset($_POST['name']) ? htmlspecialchars($_POST['name']) : '';
-    $email   = isset($_POST['email']) ? filter_var($_POST['email'], FILTER_SANITIZE_EMAIL) : '';
-    $subject = isset($_POST['subject']) ? htmlspecialchars($_POST['subject']) : '';
-    $message = isset($_POST['message']) ? nl2br(htmlspecialchars($_POST['message'])) : '';
-
-    if ($email === '' || $message === '') {
-        header('Content-Type: application/json');
-        echo json_encode(['status' => 'error', 'error' => 'Champs manquants']);
-        exit;
-    }
 
     // Prepare email
     $from = getenv('SMTP_FROM') ?: 'postmaster@assugeris.fr';

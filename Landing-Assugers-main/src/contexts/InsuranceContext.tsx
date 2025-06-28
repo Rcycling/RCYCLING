@@ -35,7 +35,7 @@ export const InsuranceProvider: React.FC<InsuranceProviderProps> = ({ children }
     subscriber: {},
     license: {},
     sanctions: {},
-    accidents: { list: [{}] },
+    accidents: { list: [] as Record<string, string>[] },
     need: {}
   });
 
