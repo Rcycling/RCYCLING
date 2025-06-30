@@ -25,6 +25,7 @@ const ContactStep = () => {
             value={formData.contact?.firstName || ''}
             onChange={(e) => handleInputChange('firstName', e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#16a34a] focus:border-transparent transition-all duration-300"
+            placeholder="Jean"
             required
           />
         </div>
@@ -39,6 +40,7 @@ const ContactStep = () => {
             value={formData.contact?.lastName || ''}
             onChange={(e) => handleInputChange('lastName', e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#16a34a] focus:border-transparent transition-all duration-300"
+            placeholder="Dupont"
             required
           />
         </div>
@@ -53,6 +55,7 @@ const ContactStep = () => {
             value={formData.contact?.email || ''}
             onChange={(e) => handleInputChange('email', e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#16a34a] focus:border-transparent transition-all duration-300"
+            placeholder="jean.dupont@example.com"
             required
           />
         </div>
@@ -63,11 +66,13 @@ const ContactStep = () => {
           </label>
           <input
             type="tel"
+            inputMode="tel"
             name="phone"
             pattern="^0[1-9](?:[ .-]?\d{2}){4}$"
             value={formData.contact?.phone || ''}
             onChange={(e) => handleInputChange('phone', e.target.value)}
             className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#16a34a] focus:border-transparent transition-all duration-300"
+            placeholder="06 12 34 56 78"
             required
           />
         </div>

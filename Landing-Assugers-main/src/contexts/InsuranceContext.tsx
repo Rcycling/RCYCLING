@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode
+} from 'react';
 
 interface InsuranceContextType {
   selectedProduct: string;
@@ -29,14 +35,27 @@ interface InsuranceProviderProps {
 }
 
 export const InsuranceProvider: React.FC<InsuranceProviderProps> = ({ children }) => {
-  const [selectedProduct, setSelectedProduct] = useState<string>('');
-  const [formData, setFormData] = useState({
-    contact: {},
-    subscriber: {},
-    license: {},
-    sanctions: {},
-    accidents: { list: [] as Record<string, string>[] },
-    need: {}
+  const [selectedProduct, setSelectedProduct] = useState<string>(() => {
+    return localStorage.getItem('selectedProduct') || '';
+  });
+
+  const [formData, setFormData] = useState(() => {
+    const saved = localStorage.getItem('formData');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        // ignore parse errors
+      }
+    }
+    return {
+      contact: {},
+      subscriber: {},
+      license: {},
+      sanctions: {},
+      accidents: { list: [] as Record<string, string>[] },
+      need: {}
+    };
   });
 
   const updateFormData = (section: string, data: any) => {
@@ -45,6 +64,14 @@ export const InsuranceProvider: React.FC<InsuranceProviderProps> = ({ children }
       [section]: { ...prev[section as keyof typeof prev], ...data }
     }));
   };
+
+  useEffect(() => {
+    localStorage.setItem('selectedProduct', selectedProduct);
+  }, [selectedProduct]);
+
+  useEffect(() => {
+    localStorage.setItem('formData', JSON.stringify(formData));
+  }, [formData]);
 
   return (
     <InsuranceContext.Provider value={{
