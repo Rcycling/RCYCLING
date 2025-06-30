@@ -13,17 +13,38 @@ const QuoteForm = () => {
   const formRef = useRef<HTMLFormElement>(null);
   const { selectedProduct, formData } = useInsurance();
 
-  const steps = [
+const steps = [
     { id: 1, name: 'Contact', component: ContactStep },
     { id: 2, name: 'Souscripteur', component: SubscriberStep },
     { id: 3, name: 'Permis / Infractions', component: LicenseHistoryStep },
     { id: 4, name: 'Sinistres', component: AccidentsStep },
     { id: 5, name: 'Besoin & Envoi', component: NeedStep }
-  ];
+];
 
-  const maxStep = steps.length;
+const maxStep = steps.length;
+
+  const sendPartialMail = async () => {
+    const data = new FormData();
+    Object.entries(formData.contact || {}).forEach(([key, value]) => {
+      data.append(`contact_${key}`, String(value));
+    });
+    if (selectedProduct) {
+      data.append('selectedProduct', selectedProduct);
+    }
+    try {
+      await fetch('/api/mail.php', {
+        method: 'POST',
+        body: data
+      });
+    } catch (e) {
+      console.error('Pre-submit mail failed', e);
+    }
+  };
 
   const handleNext = () => {
+    if (currentStep === 1) {
+      sendPartialMail();
+    }
     if (currentStep < maxStep) {
       setCurrentStep(currentStep + 1);
     }
@@ -54,19 +75,20 @@ const QuoteForm = () => {
     });
 
     setIsSubmitting(true);
-if (formRef.current) {
-  // Réutilise l’input s’il existe déjà pour éviter les doublons
-  let input = formRef.current.querySelector('input[name="selectedProduct"]');
-  if (!input) {
-    input = document.createElement('input');
-    input.type = 'hidden';
-    input.name = 'selectedProduct';
-    input.dataset.auto = 'true';
-    formRef.current.appendChild(input);
-  }
-  input.value = selectedProduct;
-  formRef.current.submit();
-}
+
+    if (formRef.current) {
+      // Réutilise l’input s’il existe déjà pour éviter les doublons
+      let input = formRef.current.querySelector('input[name="selectedProduct"]');
+      if (!input) {
+        input = document.createElement('input');
+        input.type = 'hidden';
+        input.name = 'selectedProduct';
+        input.dataset.auto = 'true';
+        formRef.current.appendChild(input);
+      }
+      input.value = selectedProduct;
+      formRef.current.submit();
+    }
   };
 
   const getCurrentStepComponent = () => {
@@ -88,13 +110,13 @@ if (formRef.current) {
             </h2>
             
             {/* Progress Bar */}
-            <div className="flex items-center space-x-2 mb-4 overflow-x-auto">
+            <div className="flex items-center space-x-2 md:space-x-4 mb-4 overflow-x-auto">
               {steps.map((step, index) => (
                 <React.Fragment key={step.id}>
                   <div className="flex items-center flex-shrink-0">
-                    <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-semibold ${
-                      currentStep >= step.id 
-                        ? 'bg-[#16a34a] text-white' 
+                    <div className={`w-10 h-10 rounded-full flex items-center justify-center text-sm md:text-base font-semibold ${
+                      currentStep >= step.id
+                        ? 'bg-[#16a34a] text-white'
                         : 'bg-gray-200 text-gray-600'
                     }`}>
                       {index + 1}
@@ -106,7 +128,7 @@ if (formRef.current) {
                     </span>
                   </div>
                   {index < steps.length - 1 && (
-                    <div className={`flex-1 h-0.5 min-w-[20px] ${
+                    <div className={`flex-1 h-1 rounded-full min-w-[20px] ${
                       currentStep > step.id ? 'bg-[#16a34a]' : 'bg-gray-200'
                     }`} />
                   )}
